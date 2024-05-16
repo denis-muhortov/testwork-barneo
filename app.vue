@@ -11,7 +11,7 @@ export default {
   <div class="app">
     <main  class="app-screen">
       <NuxtLayout>
-        <NuxtLoadingIndicator color="black" :height="5" :throttle="0" :duration="1000"/>
+        <NuxtLoadingIndicator color="white" :height="5" :throttle="0" :duration="1000"/>
         <NuxtPage/>
       </NuxtLayout>
     </main>

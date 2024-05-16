@@ -1,8 +1,9 @@
 <script setup lang="ts">
+    import { useRouter } from 'vue-router'
+    const router = useRouter()
+
     const page = ref(1);
     const limit = ref(20);
-    // const { data: users } = useFetch(`https://jsonplaceholder.typicode.com/users`);
-    //const { pending, data: users } = useLazyFetch(`https://jsonplaceholder.typicode.com/users`);
     const users = ref({})
     const userName = ref('')
     const usersName = ref([])
@@ -13,10 +14,13 @@
     async function getUsers() {
         try {
             isLoading.value = true;
+
             const response = await fetch(`https://jsonplaceholder.typicode.com/users`)
             users.value = await response.json();
+
             usersName.value = users.value.map(function(item) { return item["name"]; });
-            userName.value = users.value[0].name;
+            usersName.value.unshift('Не выбрано')
+            userName.value = 'Не выбрано'
         } catch (error) {
             console.log(error)   
         } finally {
@@ -25,12 +29,31 @@
     }
     getUsers()
 
+    async function getUserPosts(userName) {
+        try {
+            isLoading.value = true;
+
+            if (userName.value === 'Не выбрано' || userName.value === '') return
+            let user = users.value.find((user)=> {return user.name === userName.value})
+
+            const response = await fetch(`https://jsonplaceholder.typicode.com/posts?userId=${user.id}`)
+            dataPosts.value = await response.json()
+
+        } catch (error) {
+            console.log(error)   
+        } finally {
+            isLoading.value = false
+        }
+    }
 
     async function getPosts() {
         try {
             isLoading.value = true;
+
             const response = await fetch(`https://jsonplaceholder.typicode.com/posts?_limit=20&_start=${(page.value-1)*limit.value}`)
             dataPosts.value = await response.json()
+
+            userName.value = 'Не выбрано'
         } catch (error) {
             console.log(error)   
         } finally {
@@ -39,11 +62,23 @@
     }
     getPosts()
 
+
+    function openPost(post){
+        //router.push(`posts/${post.id}`)
+        router.push({ path: `posts/${post.id}`})
+    }
+
+
     watch(
         page,
         async () => {getPosts()},
         { immediate: true }
-        )
+    )
+    watch(
+        userName,
+        async () => {getUserPosts(userName)},
+        { immediate: true }
+    )
 </script>
 
 <template>
@@ -51,11 +86,7 @@
         <div class="app_grid">
             <div class="flex w-full h-full flex-col justify-between items-center">
                 <div class="flex w-full justify-between items-center">
-                    <!-- {{ user?.name }}
-                    <div class="" v-for="item in users">
-                        {{ item?.name }}
-                    </div> -->
-                    <USelect v-if="!pending"
+                    <USelect
                         icon="i-heroicons-magnifying-glass-20-solid"
                         placeholder="Search..."
                         v-model="userName" 
@@ -75,7 +106,7 @@
                 </div>
                 <div class="container" v-else>
                     <div v-for="post in dataPosts" :key="post.id">
-                        <thePost :post="post"/>
+                        <thePost :post="post" @click="openPost(post)"/>
                     </div>
                 </div>
             </div>
