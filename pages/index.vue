@@ -2,11 +2,29 @@
     const page = ref(1);
     const limit = ref(20);
     // const { data: users } = useFetch(`https://jsonplaceholder.typicode.com/users`);
-    const { pending, data: users } = useLazyFetch(`https://jsonplaceholder.typicode.com/users`);
-    const user = ref(users.value?.[0])
+    //const { pending, data: users } = useLazyFetch(`https://jsonplaceholder.typicode.com/users`);
+    const users = ref({})
+    const userName = ref('')
+    const usersName = ref([])
 
     const dataPosts = ref(null);
     let isLoading = ref(false);
+
+    async function getUsers() {
+        try {
+            isLoading.value = true;
+            const response = await fetch(`https://jsonplaceholder.typicode.com/users`)
+            users.value = await response.json();
+            usersName.value = users.value.map(function(item) { return item["name"]; });
+            userName.value = users.value[0].name;
+        } catch (error) {
+            console.log(error)   
+        } finally {
+            isLoading.value = false
+        }
+    }
+    getUsers()
+
 
     async function getPosts() {
         try {
@@ -33,12 +51,15 @@
         <div class="app_grid">
             <div class="flex w-full h-full flex-col justify-between items-center">
                 <div class="flex w-full justify-between items-center">
-                    {{ user }}
+                    <!-- {{ user?.name }}
+                    <div class="" v-for="item in users">
+                        {{ item?.name }}
+                    </div> -->
                     <USelect v-if="!pending"
                         icon="i-heroicons-magnifying-glass-20-solid"
                         placeholder="Search..."
-                        v-model="user" 
-                        :options="users.name" 
+                        v-model="userName" 
+                        :options="usersName" 
                     />
                     <UPagination 
                         :prev-button="{ icon: 'i-heroicons-arrow-small-left-20-solid', label: 'Назад', color: 'gray' }"
