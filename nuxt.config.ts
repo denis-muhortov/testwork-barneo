@@ -18,9 +18,25 @@ export default defineNuxtConfig({
       mode: 'out-in' 
     }
   },
+
+  components: [
+    "~/components",
+  ],
+
   css: [
     "@/assets/style/index.scss",
   ],
   devtools: { enabled: true },
-  modules: ["@nuxt/ui"]
+  modules: [
+    '@pinia/nuxt',
+    "@nuxt/ui"
+  ],
+
+  imports: {
+    dirs: ["./stores"],
+  },
+
+  pinia: {
+    storesDirs: ['./stores/**'],
+  },
 })
