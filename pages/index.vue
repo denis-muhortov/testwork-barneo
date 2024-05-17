@@ -96,7 +96,9 @@ watch(
   <div class="screen">
     <div class="app_grid">
       <div class="flex w-full h-full flex-col justify-between items-center">
-        <div class="flex flex-col w-full justify-between items-center sm:flex-row">
+        <div
+          class="flex flex-col w-full justify-between items-center sm:flex-row"
+        >
           <USelect
             icon="i-heroicons-magnifying-glass-20-solid"
             placeholder="Search..."
@@ -122,20 +124,19 @@ watch(
             :total="25"
           />
         </div>
-        <Transition name="page" mode="out-in">
-          <div class="container" v-if="isLoading">
-            <USkeleton
-              class="flex items-center space-x-4 h-[250px] max-h-[250px]"
-              v-for="i in 20"
-              :key="i"
-            />
+
+        <div class="container" v-if="isLoading">
+          <USkeleton
+            class="flex items-center space-x-4 h-[250px] max-h-[250px]"
+            v-for="i in 20"
+            :key="i"
+          />
+        </div>
+        <div class="container" v-else>
+          <div v-for="post in store.posts" :key="post.id">
+            <thePost :post="post" @click="openPost(post)" />
           </div>
-          <div class="container" v-else>
-            <div v-for="post in store.posts" :key="post.id">
-              <thePost :post="post" @click="openPost(post)" />
-            </div>
-          </div>
-        </Transition>
+        </div>
       </div>
     </div>
   </div>
@@ -167,17 +168,17 @@ watch(
   }
 }
 @media screen and (max-width: 1480px) {
-  .container{
+  .container {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 @media screen and (max-width: 1050px) {
-  .container{
+  .container {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 @media screen and (max-width: 800px) {
-  .container{
+  .container {
     grid-template-columns: repeat(1, 1fr);
   }
 }

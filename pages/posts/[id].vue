@@ -47,58 +47,56 @@ async function onSubmit(event: FormSubmitEvent<any>) {
 <template>
   <div class="w-screen h-screen flex justify-center items-center">
     <div class="app_grid">
-      <Transition name="page" mode="out-in">
-        <div class="w-full h-full" v-if="pending">
-          <USkeleton
-            class="flex items-center space-x-4 h-[250px] max-h-[250px]"
-          />
-        </div>
-        <div v-else class="flex flex-col">
-          <UCard class="item flex my-16 w-full h-fit">
-            <p>
-              <span class="font-bold"> userId: </span>
-              {{ post?.userId }}
-            </p>
-            <p>
-              <span class="font-bold"> id: </span>
-              {{ post?.id }}
-            </p>
-            <p>
-              <span class="font-bold"> title: </span>
-              {{ post?.title }}
-            </p>
-            <p>
-              <span class="font-bold"> body: </span>
-              {{ post?.body }}
-            </p>
-          </UCard>
-          <UButton @click="isOpen = true" label="Редактировать" class="w-fit" />
-          <Teleport to="body">
-            <UModal v-model="isOpen">
-              <div class="p-4">
-                <UForm
-                  :validate="validate"
-                  :state="state"
-                  class="space-y-4"
-                  @submit="onSubmit"
-                >
-                  <UFormGroup label="title" name="title">
-                    <UInput v-model="state.title" />
-                  </UFormGroup>
+      <div class="w-full h-full" v-if="pending">
+        <USkeleton
+          class="flex items-center space-x-4 h-[250px] max-h-[250px]"
+        />
+      </div>
+      <div v-else class="flex flex-col">
+        <UCard class="item flex my-16 w-full h-fit">
+          <p>
+            <span class="font-bold"> userId: </span>
+            {{ post?.userId }}
+          </p>
+          <p>
+            <span class="font-bold"> id: </span>
+            {{ post?.id }}
+          </p>
+          <p>
+            <span class="font-bold"> title: </span>
+            {{ post?.title }}
+          </p>
+          <p>
+            <span class="font-bold"> body: </span>
+            {{ post?.body }}
+          </p>
+        </UCard>
+        <UButton @click="isOpen = true" label="Редактировать" class="w-fit" />
+        <Teleport to="body">
+          <UModal v-model="isOpen">
+            <div class="p-4">
+              <UForm
+                :validate="validate"
+                :state="state"
+                class="space-y-4"
+                @submit="onSubmit"
+              >
+                <UFormGroup label="title" name="title">
+                  <UInput v-model="state.title" />
+                </UFormGroup>
 
-                  <UFormGroup label="body" name="body">
-                    <UInput v-model="state.body" />
-                  </UFormGroup>
+                <UFormGroup label="body" name="body">
+                  <UInput v-model="state.body" />
+                </UFormGroup>
 
-                  <UButton :loading="isLoading" type="submit">
-                    Отправить
-                  </UButton>
-                </UForm>
-              </div>
-            </UModal>
-          </Teleport>
-        </div>
-      </Transition>
+                <UButton :loading="isLoading" type="submit">
+                  Отправить
+                </UButton>
+              </UForm>
+            </div>
+          </UModal>
+        </Teleport>
+      </div>
     </div>
   </div>
 </template>
