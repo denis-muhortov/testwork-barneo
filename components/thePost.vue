@@ -1,7 +1,8 @@
-<script>
+<script lang="ts">
+import { type Post } from "../interface/interface";
 export default {
   props: {
-    post: Object,
+    post: Object as PropType<Post>,
   },
 };
 </script>
@@ -25,13 +26,11 @@ export default {
 
 <style lang="scss" scoped>
 .item {
-
-    &-text{
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
+  &-text {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
 }
-
 </style>

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useRouter } from "vue-router";
 import type { FormError, FormSubmitEvent } from "#ui/types";
 
 const route = useRoute();
@@ -7,8 +6,8 @@ const { pending, data: post } = useLazyFetch(
   `https://jsonplaceholder.typicode.com/posts/${route.params.id}`
 );
 
-const isOpen = ref(false);
-const isLoading = ref(false);
+const isOpen: Ref<boolean> = ref(false);
+const isLoading: Ref<boolean> = ref(false);
 
 const state = reactive({
   title: post.value?.title,

@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
+import { type Post, type User } from "../interface/interface";
 const store = useAppStore();
 const router = useRouter();
 
-const page = ref(1);
-const limit = ref(20);
-const users = ref({});
-const userName = ref("");
-const usersName = ref([]);
-let isLoading = ref(false);
+const page: Ref<number> = ref(store.pagination.page);
+const limit: number = store.pagination.limit;
+const users: User | Ref<{}> = ref({});
+const userName: Ref<string> = ref("");
+const usersName: Ref<string[]> = ref([]);
+let isLoading: Ref<boolean> = ref(false);
 
 async function getUsers() {
   try {
@@ -17,7 +18,7 @@ async function getUsers() {
     const response = await fetch(`https://jsonplaceholder.typicode.com/users`);
     users.value = await response.json();
 
-    usersName.value = users.value.map(function (item) {
+    usersName.value = users.value.map((item: User) => {
       return item["name"];
     });
     usersName.value.unshift("Не выбрано");
@@ -30,12 +31,12 @@ async function getUsers() {
 }
 getUsers();
 
-async function getUserPosts(userName) {
+async function getUserPosts(userName: Ref<string>) {
   if (userName.value === "Не выбрано" || userName.value === "")
     return getPosts();
   try {
     isLoading.value = true;
-    let user = users.value.find((user) => {
+    let user: string = users.value.find((user: User) => {
       return user.name === userName.value;
     });
 
@@ -56,10 +57,11 @@ async function getPosts() {
 
     const response = await fetch(
       `https://jsonplaceholder.typicode.com/posts?_limit=20&_start=${
-        (page.value - 1) * limit.value
+        (page.value - 1) * limit
       }`
     );
     store.posts = await response.json();
+    store.pagination.page = page.value;
 
     userName.value = "Не выбрано";
   } catch (error) {
@@ -70,7 +72,7 @@ async function getPosts() {
 }
 getPosts();
 
-function openPost(post) {
+function openPost(post: Post) {
   router.push({ path: `posts/${post.id}` });
 }
 
@@ -94,12 +96,13 @@ watch(
   <div class="screen">
     <div class="app_grid">
       <div class="flex w-full h-full flex-col justify-between items-center">
-        <div class="flex w-full justify-between items-center">
+        <div class="flex flex-col w-full justify-between items-center sm:flex-row">
           <USelect
             icon="i-heroicons-magnifying-glass-20-solid"
             placeholder="Search..."
             v-model="userName"
             :options="usersName"
+            class="mb-5 sm:mb-0"
           />
           <UPagination
             :prev-button="{
@@ -161,6 +164,21 @@ watch(
   overflow-y: auto;
   &::-webkit-scrollbar {
     width: 0px;
+  }
+}
+@media screen and (max-width: 1480px) {
+  .container{
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media screen and (max-width: 1050px) {
+  .container{
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media screen and (max-width: 800px) {
+  .container{
+    grid-template-columns: repeat(1, 1fr);
   }
 }
 </style>
