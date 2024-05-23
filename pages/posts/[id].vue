@@ -1,18 +1,24 @@
 <script setup lang="ts">
 import type { FormError, FormSubmitEvent } from "#ui/types";
+import type { Post } from "~/interface/interface";
+
+const state = reactive({
+  title: '' as string,
+  body: '' as string,
+});
 
 const route = useRoute();
-const { pending, data: post } = useLazyFetch(
-  `https://jsonplaceholder.typicode.com/posts/${route.params.id}`
+const { pending, data: post } = useLazyFetch<Post>(
+  `https://jsonplaceholder.typicode.com/posts/${route.params.id}`,{
+    onResponse({ request, response, options }) {
+      state.title = response._data?.title;
+      state.body = response._data?.body;
+  },
+  }
 );
 
 const isOpen: Ref<boolean> = ref(false);
 const isLoading: Ref<boolean> = ref(false);
-
-const state = reactive({
-  title: post.value?.title,
-  body: post.value?.body,
-});
 
 const validate = (state: any): FormError[] => {
   const errors = [];

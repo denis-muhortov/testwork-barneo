@@ -6,9 +6,9 @@ const router = useRouter();
 
 const page: Ref<number> = ref(store.pagination.page);
 const limit: number = store.pagination.limit;
-const users: User | Ref<{}> = ref({});
+const users: Ref<User[]> = ref([]);
 const userName: Ref<string> = ref("");
-const usersName: Ref<string[]> = ref([]);
+const userNames: Ref<string[]> = ref([]);
 let isLoading: Ref<boolean> = ref(false);
 
 async function getUsers() {
@@ -18,10 +18,10 @@ async function getUsers() {
     const response = await fetch(`https://jsonplaceholder.typicode.com/users`);
     users.value = await response.json();
 
-    usersName.value = users.value.map((item: User) => {
+    userNames.value = users.value.map((item: User) => {
       return item["name"];
     });
-    usersName.value.unshift("Не выбрано");
+    userNames.value.unshift("Не выбрано");
     userName.value = "Не выбрано";
   } catch (error) {
     console.log(error);
@@ -36,12 +36,12 @@ async function getUserPosts(userName: Ref<string>) {
     return getPosts();
   try {
     isLoading.value = true;
-    let user: string = users.value.find((user: User) => {
+    let user: User | undefined = users.value.find((user: User) => {
       return user.name === userName.value;
     });
 
     const response = await fetch(
-      `https://jsonplaceholder.typicode.com/posts?userId=${user.id}`
+      `https://jsonplaceholder.typicode.com/posts?userId=${user?.id}`
     );
     store.posts = await response.json();
   } catch (error) {
@@ -103,7 +103,7 @@ watch(
             icon="i-heroicons-magnifying-glass-20-solid"
             placeholder="Search..."
             v-model="userName"
-            :options="usersName"
+            :options="userNames"
             class="mb-5 sm:mb-0"
           />
           <UPagination
