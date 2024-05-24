@@ -6,7 +6,9 @@ export const useAppStore = defineStore("store", {
     posts: [] as Array<Post>,
     pagination: {
       page: 1 as number,
-      limit: 20 as number,
+      limit: 8 as number,
+      pageCount: 5 as number,
+      total: 61 as number,
     },
   }),
   getters: {

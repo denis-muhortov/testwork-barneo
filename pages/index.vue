@@ -5,7 +5,7 @@ const store = useAppStore();
 const router = useRouter();
 
 const page: Ref<number> = ref(store.pagination.page);
-const limit: number = store.pagination.limit;
+const limit: Ref<number> = ref(store.pagination.limit);
 const users: Ref<User[]> = ref([]);
 const userName: Ref<string> = ref("");
 const userNames: Ref<string[]> = ref([]);
@@ -41,7 +41,9 @@ async function getUserPosts(userName: Ref<string>) {
     });
 
     const response = await fetch(
-      `https://jsonplaceholder.typicode.com/posts?userId=${user?.id}`
+      `https://jsonplaceholder.typicode.com/posts?userId=${user?.id}&_limit=${
+        limit.value
+      }&_start=${(page.value - 1) * limit.value}`
     );
     store.posts = await response.json();
   } catch (error) {
@@ -56,9 +58,9 @@ async function getPosts() {
     isLoading.value = true;
 
     const response = await fetch(
-      `https://jsonplaceholder.typicode.com/posts?_limit=20&_start=${
-        (page.value - 1) * limit
-      }`
+      `https://jsonplaceholder.typicode.com/posts?_limit=${
+        limit.value
+      }&_start=${(page.value - 1) * limit.value}`
     );
     store.posts = await response.json();
     store.pagination.page = page.value;
@@ -79,14 +81,23 @@ function openPost(post: Post) {
 watch(
   page,
   async () => {
-    getPosts();
+    if (userName.value === "Не выбрано" || userName.value === "") getPosts();
+    else getUserPosts(userName);
   },
   { immediate: true }
 );
 watch(
   userName,
   async () => {
-    getUserPosts(userName);
+    if (userName.value === "Не выбрано" || userName.value === "") {
+      page.value = store.pagination.page = 1;
+      store.pagination.total = 61;
+      getUserPosts(userName);
+    } else {
+      page.value = store.pagination.page = 1;
+      store.pagination.total = 10;
+      getUserPosts(userName);
+    }
   },
   { immediate: true }
 );
@@ -120,8 +131,8 @@ watch(
             }"
             v-model="page"
             size="md"
-            :page-count="5"
-            :total="25"
+            :page-count="store.pagination.pageCount"
+            :total="store.pagination.total"
           />
         </div>
 
