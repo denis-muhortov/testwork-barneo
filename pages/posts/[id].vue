@@ -20,6 +20,11 @@ const { pending, data: post } = useLazyFetch<Post>(
 const isOpen: Ref<boolean> = ref(false);
 const isLoading: Ref<boolean> = ref(false);
 
+/**
+ * Валидация формы
+ * @param {any} state - Объект формы
+ * @returns Ошибка если не соответствует правилу валидации
+ */
 const validate = (state: any): FormError[] => {
   const errors = [];
   if (!state.title) errors.push({ path: "title", message: "Required" });
@@ -27,7 +32,10 @@ const validate = (state: any): FormError[] => {
   return errors;
 };
 
-async function onSubmit(event: FormSubmitEvent<any>) {
+/**
+ * Отправка формы
+ */
+async function onSubmit() {
   try {
     isLoading.value = true;
     let response = await fetch(

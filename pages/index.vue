@@ -11,6 +11,10 @@ const userName: Ref<string> = ref("");
 const userNames: Ref<string[]> = ref([]);
 let isLoading: Ref<boolean> = ref(false);
 
+/**
+ * Запрашивает юзеров
+ * @returns Имена пользователей
+ */
 async function getUsers() {
   try {
     isLoading.value = true;
@@ -31,6 +35,11 @@ async function getUsers() {
 }
 getUsers();
 
+/**
+ * Запрашивает пост пользователя
+ * @param {Ref<string>} userName - Имя пользователя
+ * @returns Пост пользователя
+ */
 async function getUserPosts(userName: Ref<string>) {
   if (userName.value === "Не выбрано" || userName.value === "")
     return getPosts();
@@ -53,6 +62,10 @@ async function getUserPosts(userName: Ref<string>) {
   }
 }
 
+/**
+ * Запрашивает посты
+ * @returns Все посты
+ */
 async function getPosts() {
   try {
     isLoading.value = true;
@@ -74,6 +87,10 @@ async function getPosts() {
 }
 getPosts();
 
+/**
+ * Открывает пост пользователя
+ * @param {Post} post - выбраный пост
+ */
 function openPost(post: Post) {
   router.push({ path: `posts/${post.id}` });
 }
